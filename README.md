@@ -2,7 +2,7 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.1.4.
 
-Partie web d'un projet personnel visant a créer une application de gestion de lieu de pêche. Partie serveur -> https://github.com/lfortunier/appcarpe-server
+Partie web d'un projet personnel visant à créer une application de gestion de lieux de pêche. Partie serveur -> https://github.com/lfortunier/appcarpe-server
 Angular en web 
 Java en serveur
 

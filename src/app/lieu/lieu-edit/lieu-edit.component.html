@@ -1,0 +1,79 @@
+<div class="container">
+  <h2>{{title}}</h2>
+  <form *ngIf="lieu" (ngSubmit)="onSubmit()">
+    <mat-form-field class="mat-form-field-group simple">
+      <mat-label>Nom</mat-label>
+      <input matInput required [(ngModel)]="lieu.name" name="name">
+    </mat-form-field>
+    <ng-container class="mat-form-field-group">
+      <mat-form-field class="triple">
+        <mat-label>Ville</mat-label>
+        <input matInput [(ngModel)]="lieu.situationGeographique.nomVille" name="nomVille">
+      </mat-form-field>
+      <mat-form-field class="triple middle">
+        <mat-label>Code postal</mat-label>
+        <input matInput [(ngModel)]="lieu.situationGeographique.codePostal" name="codePastal">
+      </mat-form-field>
+      <mat-form-field class="triple right">
+        <mat-label>Departement</mat-label>
+        <input matInput [(ngModel)]="lieu.situationGeographique.departement" name="departement">
+      </mat-form-field>
+    </ng-container>
+    <mat-form-field appearance="fill" class="mat-form-field-group simple">
+      <mat-label>Type</mat-label>
+      <mat-select [(ngModel)]="lieu.typeLieu" name="typeLieu">
+        <mat-option *ngFor="let type of typesLieu" [value]="type">
+          {{type.libelle | typeLieuLibelle}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <ng-container class="mat-form-field-group">
+      <mat-form-field class="double">
+        <mat-label>Taille en ha</mat-label>
+        <input matInput type="number" [(ngModel)]="lieu.taille" name="taille">
+      </mat-form-field>
+      <mat-form-field class="double right">
+        <mat-label>Nombre de postes</mat-label>
+        <input matInput type="number" [(ngModel)]="lieu.nombrePoste" name="postes">
+      </mat-form-field>
+    </ng-container>
+    <ng-container>
+      <div class="double checkbox-content">
+        <p>Type de session</p>
+        <br>
+        <mat-checkbox [(ngModel)]="lieu.session" name="session">Session</mat-checkbox>
+        <mat-form-field *ngIf="lieu.session" class="prix">
+          <mat-label>Prix/24h en €</mat-label>
+          <input matInput type="number" [(ngModel)]="lieu.prix24" name="prix24">
+        </mat-form-field>
+        <br>
+        <mat-checkbox [(ngModel)]="lieu.journee" name="journee">Journée</mat-checkbox>
+        <mat-form-field *ngIf="lieu.journee" class="prix">
+          <mat-label>Prix en €</mat-label>
+          <input matInput type="number" [(ngModel)]="lieu.prixJournee" name="prixJournee">
+        </mat-form-field>
+      </div>
+      <div class="double right checkbox-content">
+        <p>Navigation autorisé</p>
+        <br>
+        <mat-checkbox [(ngModel)]="lieu.bateauAmorceur" name="bateauAmorceur">Bateau amorceur</mat-checkbox>
+        <br>
+        <mat-checkbox [(ngModel)]="lieu.navigation" name="navigation">Navigation</mat-checkbox>
+      </div>
+    </ng-container>
+    <mat-form-field class="mat-form-field-group simple">
+      <mat-label>Site internet</mat-label>
+      <input matInput [(ngModel)]="lieu.siteInternet" name="siteInternet">
+    </mat-form-field>
+
+    <mat-form-field class="mat-form-field-group simple">
+      <mat-label>Commentaire</mat-label>
+      <input matInput [(ngModel)]="lieu.commentaire" name="commentaire">
+    </mat-form-field>
+
+    <div class="mat-form-field-group group-valider row">
+      <button mat-button color="accent" class="col" type="submit">Valider</button>
+      <button mat-button [routerLink]="['/lieu']" class="col">Retour</button>
+    </div>
+  </form>
+</div>

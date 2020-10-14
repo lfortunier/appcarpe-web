@@ -1,0 +1,17 @@
+<p>
+  <mat-toolbar>
+    <button mat-icon-button aria-label="Menu button" *ngIf="isLogged()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span>AppCarpe</span>
+    <span class="spacer"></span>
+    <ng-container *ngIf="!isLogged() else notLogged">
+      <button mat-stroked-button color="primary" [routerLink]="'login'">Login</button>
+      <button mat-stroked-button color="accent" [routerLink]="'register'" class="second-button">S'enregistrer</button>
+    </ng-container>
+    <ng-template #notLogged>
+      <button mat-stroked-button color="primary" [routerLink]="'user'">{{getFirstnameLogged()}}</button>
+      <button mat-stroked-button color="accent" [routerLink]="'login'" (click)="loggout()" class="second-button">Se déconnecter</button>
+    </ng-template>
+  </mat-toolbar>
+</p>

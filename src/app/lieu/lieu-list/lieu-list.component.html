@@ -1,0 +1,108 @@
+<div class="container">
+  <div class="row">
+    <mat-form-field class="col-11">
+      <mat-label>Filtre</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Étang des ..." #input>
+    </mat-form-field>
+    <a class="fa-icon-plus">
+      <fa-icon [icon]="plusIcon" size="lg" [routerLink]="['new']"></fa-icon>
+    </a>
+  </div>
+
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
+
+      <!-- Progress Column -->
+      <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
+        <ng-container *ngIf="column !== 'modify' && column !== 'delete'">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column | lieuListColumnDisplay}} </th>
+          <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+        </ng-container>
+        <ng-container *ngIf="column === 'modify'">
+          <th mat-header-cell *matHeaderCellDef> {{column | lieuListColumnDisplay}} </th>
+          <td *matCellDef="let element" (click)="onModify(element)">
+            <a>
+              <fa-icon [icon]="faEdit" class="list-icon"></fa-icon>
+            </a>
+          </td>
+        </ng-container>
+        <ng-container *ngIf="column === 'delete'">
+          <th mat-header-cell *matHeaderCellDef> {{column | lieuListColumnDisplay}} </th>
+          <td *matCellDef="let element" (click)="onDelete(element)">
+            <a>
+              <fa-icon [icon]="faTimes" class="list-icon"></fa-icon>
+            </a>
+          </td>
+        </ng-container>
+      </ng-container>
+
+      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+          <div class="element-detail"
+               [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+            <div class="row">
+              <div class="col list-detail-content">
+                <p>Type de session</p>
+                <br>
+                <mat-checkbox [(ngModel)]="element.session_" (click)="doNothingOnClick()" name="session">Session
+                </mat-checkbox>
+                <br>
+                <mat-checkbox [(ngModel)]="element.journee" (click)="doNothingOnClick()" name="journee">Journee
+                </mat-checkbox>
+              </div>
+              <div class="col list-detail-content">
+                <p>Prix</p>
+                <br>
+                <div *ngIf="element.session_ && element.prix24">{{element.prix24}}€ / 24h</div>
+                <br>
+                <div *ngIf="element.journee && element.prixJournee">{{element.prixJournee}}€ la journée</div>
+              </div>
+              <div class="col list-detail-content">
+                <p>Navigation</p>
+                <br>
+                <mat-checkbox [(ngModel)]="element.bateauAmorceur" (click)="doNothingOnClick()" name="bateauAmorceur">
+                  Bateau amorceur
+                </mat-checkbox>
+                <br>
+                <mat-checkbox [(ngModel)]="element.navigation_" (click)="doNothingOnClick()" name="navigation">
+                  Navigation
+                </mat-checkbox>
+              </div>
+            </div>
+            <div class="text-detail-content">
+              <div class="row">
+                <div *ngIf="element.nombrePoste" class="col">
+                  <br>
+                  <div>Il y a {{element.nombrePoste}} postes de disponible</div>
+                </div>
+                <div *ngIf="element.siteInternet" class="col">
+                  <br>
+                  <a [href]="element.siteInternet">Site web</a>
+                </div>
+              </div>
+              <ng-container *ngIf="element.commentaire">
+                <br>
+                <div>{{element.commentaire}}</div>
+              </ng-container>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let element; columns: displayedColumns;"
+          class="element-row"
+          [class.expanded-row]="displayedColumns === element"
+          (click)="expandedElement = displayedColumns === element || expandedElement === element ? null : element">
+      </tr>
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+  </div>
+</div>

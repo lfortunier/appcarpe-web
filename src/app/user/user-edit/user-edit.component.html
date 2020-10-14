@@ -1,0 +1,20 @@
+<div class="container" *ngIf="user">
+  <form (ngSubmit)="onSubmit()">
+    <mat-form-field class="form-container">
+      <mat-label>Prénom</mat-label>
+      <input matInput [(ngModel)]="user.firstname" name="firstname">
+    </mat-form-field>
+    <mat-form-field class="form-container">
+      <mat-label>Nom</mat-label>
+      <input matInput [(ngModel)]="user.lastname" name="lastname">
+    </mat-form-field>
+    <mat-form-field class="form-container">
+      <mat-label>Email</mat-label>
+      <input matInput [(ngModel)]="user.email" name="email" required>
+    </mat-form-field>
+    <div class="row form-container">
+      <button mat-button color="accent" class="col" type="submit">Enregistrer</button>
+      <button mat-button [routerLink]="['/lieu']" class="col">Retour</button>
+    </div>
+  </form>
+</div>

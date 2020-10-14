@@ -1,0 +1,73 @@
+<mat-card>
+  <mat-card-title>S'enregistrer</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <p>
+        <mat-form-field>
+          <input type="text"
+                 required
+                 matInput
+                 placeholder="Email"
+                 formControlName="email"
+                 [formControl]="inputEmail"
+                 [errorStateMatcher]="matcher">
+          <mat-error *ngIf="inputEmail.hasError('required')">
+            Email nécessaire
+          </mat-error>
+          <mat-error *ngIf="inputEmail.hasError('email') && !inputEmail.hasError('required')">
+            Veuillez remplir une adresse email
+            correcte
+          </mat-error>
+        </mat-form-field>
+      </p>
+
+
+      <p>
+        <mat-form-field>
+          <input type="password"
+                 matInput
+                 placeholder="Mot de passe"
+                 formControlName="password"
+                 [formControl]="inputPassword"
+                 required
+          >
+          <mat-error *ngIf="inputPassword.hasError('required') || inputPassword.hasError('minlength')">
+            Le mot de passe doit être compsé de 8 charactères
+          </mat-error>
+        </mat-form-field>
+      </p>
+
+      <p>
+        <mat-form-field>
+          <input type="password"
+                 matInput
+                 placeholder="Confirmer Mot de passe"
+                 formControlName="confirmPassword"
+                 [formControl]="inputConfirmPassword"
+                 required
+          >
+          <mat-error *ngIf="inputConfirmPassword.hasError('NoPassswordMatch')">
+            Les mots de passe ne sont pas identique
+          </mat-error>
+        </mat-form-field>
+      </p>
+
+      <p>
+        <mat-form-field>
+          <input type="text" matInput placeholder="Prénom" formControlName="firstname">
+        </mat-form-field>
+      </p>
+
+      <p>
+        <mat-form-field>
+          <input type="text" matInput placeholder="Nom" formControlName="lastname">
+        </mat-form-field>
+      </p>
+
+      <div class="button">
+        <button type="submit" mat-button [disabled]="form.invalid">Register</button>
+      </div>
+
+    </form>
+  </mat-card-content>
+</mat-card>

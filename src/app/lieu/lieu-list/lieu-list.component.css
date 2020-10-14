@@ -1,0 +1,71 @@
+table {
+  width: 100%;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+td, th {
+  width: 25%;
+}
+
+tr.detail-row {
+  height: 0;
+}
+
+tr.element-row:not(.expanded-row):hover {
+  background: #e0e0e0;
+}
+
+tr.element-row:not(.expanded-row):active {
+  background: darkgrey;
+}
+
+.element-row td {
+  border-bottom-width: 0;
+}
+
+.element-detail {
+  overflow: hidden;
+}
+
+fa-icon {
+  margin: auto;
+}
+
+.list-icon {
+  margin-right: 1rem;
+}
+
+a {
+  color: black;
+}
+
+a:hover {
+  color: darkgrey;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+.fa-icon-plus {
+  margin: auto;
+}
+
+.list-detail-content {
+  border: solid 1px #80808057;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-left: 3rem;
+  margin-right: 3rem;
+}
+
+.list-detail-content p {
+  font-size: small;
+}
+
+.text-detail-content {
+  margin-left: 3rem;
+}
+

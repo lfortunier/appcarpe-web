@@ -18,6 +18,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.authService.logout();
   }
 
   form: FormGroup = new FormGroup({
@@ -29,8 +30,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.form.valid) {
       this.loginSubscribe = this.authService.login(this.form.value.email, this.form.value.password).subscribe(user => {
         this.authService.user = user.body.user;
-        this.authService.isLogged = true;
-        this.router.navigate(["/lieu"]);
+        this.router.navigate(["/accueil"]);
       }, request => {
         this.errorHandler.handlerError(request.error.errors)
       })

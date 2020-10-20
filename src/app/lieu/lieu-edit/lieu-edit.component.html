@@ -1,6 +1,6 @@
 <div class="container">
   <h2>{{title}}</h2>
-  <form *ngIf="lieu" (ngSubmit)="onSubmit()">
+  <form *ngIf="lieu" (ngSubmit)="onSubmit(f)" #f="ngForm">
     <mat-form-field class="mat-form-field-group simple">
       <mat-label>Nom</mat-label>
       <input matInput required [(ngModel)]="lieu.name" name="name">
@@ -8,21 +8,54 @@
     <ng-container class="mat-form-field-group">
       <mat-form-field class="triple">
         <mat-label>Ville</mat-label>
-        <input matInput [(ngModel)]="lieu.situationGeographique.nomVille" name="nomVille">
+        <input matInput
+               name="nomVille"
+               ngModel
+               (ngModelChange)="onChangeNomVille($event)"
+               [value]="lieu.situationGeographique.nomVille"
+               [matAutocomplete]="autoCompleteNomVille"
+        >
+        <mat-autocomplete #autoCompleteNomVille="matAutocomplete"
+                          (optionSelected)="onSelectedNomVille($event)"
+                          [displayWith]="displayNomVille">
+          <mat-option *ngFor="let option of filteredNomVille" [value]="option">
+            {{displayAutoCompleteNomVille(option)}}
+          </mat-option>
+        </mat-autocomplete>
       </mat-form-field>
       <mat-form-field class="triple middle">
         <mat-label>Code postal</mat-label>
-        <input matInput [(ngModel)]="lieu.situationGeographique.codePostal" name="codePastal">
+        <input matInput
+               name="codePostal"
+               ngModel
+               (ngModelChange)="onSelectedCodePostal($event)"
+               [value]="lieu.situationGeographique.codePostal"
+               [matAutocomplete]="autoCompleteCodePostal">
+        <mat-autocomplete #autoCompleteCodePostal="matAutocomplete" (optionSelected)="onSelectedCodePostal($event)">
+          <mat-option *ngFor="let option of filteredCodePostal" [value]="option">
+            {{option}}
+          </mat-option>
+        </mat-autocomplete>
       </mat-form-field>
       <mat-form-field class="triple right">
         <mat-label>Departement</mat-label>
-        <input matInput [(ngModel)]="lieu.situationGeographique.departement" name="departement">
+        <input matInput
+               ngModel
+               [value]="lieu.situationGeographique.departement"
+               (ngModelChange)="onChangeDepartement($event)"
+               name="departement"
+               [matAutocomplete]="autoCompleteDepartement">
+        <mat-autocomplete #autoCompleteDepartement="matAutocomplete">
+          <mat-option *ngFor="let option of filteredDepartement" [value]="option">
+            {{option}}
+          </mat-option>
+        </mat-autocomplete>
       </mat-form-field>
     </ng-container>
     <mat-form-field appearance="fill" class="mat-form-field-group simple">
       <mat-label>Type</mat-label>
-      <mat-select [(ngModel)]="lieu.typeLieu" name="typeLieu">
-        <mat-option *ngFor="let type of typesLieu" [value]="type">
+      <mat-select [(ngModel)]="typeLieuId" name="typeLieu">
+        <mat-option *ngFor="let type of typesLieu" [value]="type.id">
           {{type.libelle | typeLieuLibelle}}
         </mat-option>
       </mat-select>
@@ -72,7 +105,7 @@
     </mat-form-field>
 
     <div class="mat-form-field-group group-valider row">
-      <button mat-button color="accent" class="col" type="submit">Valider</button>
+      <button mat-button color="accent" class="col" type="submit" [disabled]="!f.valid">Valider</button>
       <button mat-button [routerLink]="['/lieu']" class="col">Retour</button>
     </div>
   </form>

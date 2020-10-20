@@ -1,4 +1,4 @@
-import {Lieu} from "./lieu/lieu";
+import {Lieu} from "../lieu/lieu";
 
 export interface SituationGeographique {
   id: number,

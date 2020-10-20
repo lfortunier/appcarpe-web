@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {LoginComponent} from './auth/login/login.component';
@@ -15,7 +15,11 @@ import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {MaterialModule} from "./materials/material.module";
 import {MatPaginatorIntl} from "@angular/material/paginator";
 import {CustomPaginator} from "./materials/customPaginatorConfiguration";
-import { UserEditComponent } from './user/user-edit/user-edit.component';
+import {UserEditComponent} from './user/user-edit/user-edit.component';
+import {appInitializer} from "./shared/services/app-initializer";
+import {AuthService} from "./shared/services/auth.service";
+import { AccueilComponent } from './accueil/accueil.component';
+import {RouterModule} from "@angular/router";
 
 @NgModule({
   declarations: [
@@ -24,7 +28,8 @@ import { UserEditComponent } from './user/user-edit/user-edit.component';
     LoginComponent,
     MenuComponent,
     DisplayMessageHandlerComponent,
-    UserEditComponent
+    UserEditComponent,
+    AccueilComponent
   ],
   imports: [
     BrowserModule,
@@ -35,13 +40,16 @@ import { UserEditComponent } from './user/user-edit/user-edit.component';
     ReactiveFormsModule,
     SharedModule,
     FontAwesomeModule,
-    FormsModule
+    FormsModule,
+    RouterModule
   ],
-  providers: [{
-    provide: HTTP_INTERCEPTORS,
-    useClass: AuthInterceptor,
-    multi: true
-  },
+  providers: [
+    {provide: APP_INITIALIZER, useFactory: appInitializer, multi: true, deps: [AuthService]},
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
     {provide: MatPaginatorIntl, useValue: CustomPaginator()}
   ],
   bootstrap: [AppComponent]

@@ -13,7 +13,14 @@ v1 :    Authentification :  - Token JWT
         Lieu :  -Ajout
                 -Modification
                 -Suppression       
-v2 : en cours
+v2 :    Authentification :   - Plus besoin de se logger continuellement, connection automatique grace au jeton JWT
+        Lieu :  - Auto-complétion lorsque l'ont rempli la situation géographique
+                - Nouveau design dans les détails d'un lieu
+        Autre : - Ajout une page d'accueil
+        Bug :   - Affichage du type de lieu lors d'une modification de lieu
+                - Nom obligatoire lors d'une modification/ajout d'un lieu
+                
+v3 : en cours
 
 ## Development server
 

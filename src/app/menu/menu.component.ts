@@ -15,11 +15,11 @@ export class MenuComponent implements OnInit {
   }
 
   isLogged() {
-    return this.authService.isLogged;
+    return this.authService.isLogged();
   }
 
   getFirstnameLogged() {
-    return this.authService.user.firstname;
+    return this.authService.user?.firstname;
   }
 
   loggout() {

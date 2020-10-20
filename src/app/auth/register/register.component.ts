@@ -7,6 +7,7 @@ import {User} from "../../shared/models/user";
 import {Router} from "@angular/router";
 import {DisplayMessageHandlerService} from "../../shared/display-message-handler/display-message-handler.service";
 import {ErrorStateMatcher} from "@angular/material/core";
+import {AuthService} from "../../shared/services/auth.service";
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -25,10 +26,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
   registerSubscribe: Subscription;
   matcher = new MyErrorStateMatcher();
 
-  constructor(private http: HttpClient, private router: Router, private errorHandler: DisplayMessageHandlerService) {
+  constructor(private http: HttpClient, private router: Router, private errorHandler: DisplayMessageHandlerService, private authService: AuthService) {
   }
 
   ngOnInit(): void {
+    this.authService.logout();
   }
 
   form: FormGroup = new FormGroup({

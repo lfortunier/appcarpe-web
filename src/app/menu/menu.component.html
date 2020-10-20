@@ -1,8 +1,12 @@
 <p>
   <mat-toolbar>
-    <button mat-icon-button aria-label="Menu button" *ngIf="isLogged()">
+    <button mat-icon-button aria-label="Menu button" *ngIf="isLogged()" [matMenuTriggerFor]="menu">
       <mat-icon>menu</mat-icon>
     </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item [routerLink]="['accueil']">Accueil</button>
+      <button mat-menu-item [routerLink]="['lieu']">Liste des lieux</button>
+    </mat-menu>
     <span>AppCarpe</span>
     <span class="spacer"></span>
     <ng-container *ngIf="!isLogged() else notLogged">

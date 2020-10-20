@@ -10,7 +10,6 @@ import {User} from "../models/user";
 export class AuthService {
 
   userLogged: User;
-  isLogged: boolean = false;
 
   constructor(private http: HttpClient) {
   }
@@ -19,13 +18,13 @@ export class AuthService {
     const user = {
       email: email,
       password: password
-    }as User
-    return this.http.post<any>(`${environment.url}auth/login`, user,{observe: 'response'})
+    } as User
+    return this.http.post<any>(`${environment.url}auth/login`, user, {observe: 'response'})
       .pipe(
         tap(resp => {
           AuthService.setSession(resp.headers.get('Authorization'));
         })
-        ,shareReplay()
+        , shareReplay()
       );
   }
 
@@ -35,15 +34,28 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem("user_token");
-    this.isLogged = false;
     this.userLogged = null;
   }
 
-  get user(){
+  get user() {
     return this.userLogged;
   }
 
-  set user(user: User){
+  set user(user: User) {
     this.userLogged = user;
+  }
+
+  isLogged() {
+    return !!this.user;
+  }
+
+  refreshToken() {
+    this.user = null;
+    return this.http.post<any>(`${environment.url}auth/refresh-token`, {})
+      .pipe(tap((user) => {
+        if (user) {
+          this.user = user;
+        }
+      }));
   }
 }

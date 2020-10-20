@@ -1,4 +1,4 @@
-import {SituationGeographique} from "../situation-geographique";
+import {SituationGeographique} from "../situation-geographique/situation-geographique";
 import {TypeLieu} from "../type-lieu/type-lieu";
 
 export interface Lieu {

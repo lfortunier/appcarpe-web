@@ -14,6 +14,9 @@ export interface Lieu {
   siteInternet: string,
   nombrePoste: number,
   commentaire: string,
+  longitude: number,
+  latitude: number,
+  synchronisationMap: boolean,
   situationGeographique: SituationGeographique,
   typeLieu: TypeLieu
 }

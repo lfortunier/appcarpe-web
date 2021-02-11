@@ -22,6 +22,8 @@ export class LieuService {
       siteInternet: null,
       nombrePoste: null,
       commentaire: null,
+      longitude: null,
+      latitude: null,
       situationGeographique: {
         id: null,
         nomVille: null,
@@ -29,7 +31,8 @@ export class LieuService {
         departement: null,
         lieux: null
       },
-      typeLieu: null
+      typeLieu: null,
+      synchronisationMap: true
     }
   }
 }

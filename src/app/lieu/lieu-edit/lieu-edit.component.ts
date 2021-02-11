@@ -1,7 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Subscription} from "rxjs";
-import {HttpClient} from "@angular/common/http";
+import {HttpBackend, HttpClient} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {TypeLieu} from "../../shared/models/type-lieu/type-lieu";
 import {DisplayMessageHandlerService} from "../../shared/display-message-handler/display-message-handler.service";
@@ -10,13 +10,19 @@ import {LieuService} from "../../shared/services/lieu.service";
 import {AutoCompleteCommuneResult} from "../../shared/models/situation-geographique/auto-complete/auto-complete-commune-result";
 import {AutoCompleteCommuneDepartement} from "../../shared/models/situation-geographique/auto-complete/auto-complete-commune-departement";
 import {take} from "rxjs/operators";
+import {faExchangeAlt} from "@fortawesome/free-solid-svg-icons";
+import {} from "googlemaps";
 
 @Component({
   selector: 'app-lieu-edit',
   templateUrl: './lieu-edit.component.html',
   styleUrls: ['./lieu-edit.component.css']
 })
-export class LieuEditComponent implements OnInit, OnDestroy {
+export class LieuEditComponent implements OnInit, OnDestroy, AfterViewInit {
+
+  @ViewChild('map') mapElement: any;
+  map: google.maps.Map;
+  marker = new google.maps.Marker;
 
   subscribeRoute: Subscription;
   lieu: Lieu = this.lieuService.newLieu;
@@ -29,11 +35,31 @@ export class LieuEditComponent implements OnInit, OnDestroy {
 
   allDepartement: AutoCompleteCommuneDepartement[];
 
+  faExchangeAlt = faExchangeAlt;
+
+  isSyncroMap = true;
+
+
   constructor(private activatedRoute: ActivatedRoute,
               private http: HttpClient,
               private messageHandler: DisplayMessageHandlerService,
               private lieuService: LieuService,
-              private router: Router) {
+              private router: Router,
+              private httpBackend: HttpBackend) {
+  }
+
+  ngAfterViewInit(): void {
+    const position = new google.maps.LatLng(46.3223, 2.2549)
+    const mapProperties = {
+      center: position,
+      zoom: 5,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    this.map = new google.maps.Map(this.mapElement.nativeElement, mapProperties);
+    this.map.addListener('click', (evt) => {
+      this.setSituationGeoByLatLong(evt.latLng.lat(), evt.latLng.lng());
+      this.setMarker(evt.latLng.lat(), evt.latLng.lng());
+    })
   }
 
   ngOnInit(): void {
@@ -46,6 +72,13 @@ export class LieuEditComponent implements OnInit, OnDestroy {
             (lieu: Lieu) => {
               this.lieu = lieu;
               this.isAjout = false;
+              this.isSyncroMap = !!this.lieu.synchronisationMap;
+              if (this.lieu.latitude && this.lieu.longitude) {
+                this.setMapCenterByCoord(this.lieu.latitude, this.lieu.longitude);
+                this.setMarker(this.lieu.latitude, this.lieu.longitude);
+              } else {
+                this.setMapCenterBySituationGeographique()
+              }
             }, error => this.messageHandler.handlerError(error)
           )
 
@@ -80,6 +113,17 @@ export class LieuEditComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(f) {
+    if (this.marker && this.marker.getPosition()) {
+      this.lieu.longitude = this.marker.getPosition().lng();
+      this.lieu.latitude = this.marker.getPosition().lat();
+    }
+    this.lieu.synchronisationMap = this.isSyncroMap;
+    if (!this.lieu.session) {
+      this.lieu.prix24 = null;
+    }
+    if (!this.lieu.journee) {
+      this.lieu.prixJournee = null;
+    }
     this.http.post(`${environment.url}lieu/edit`, this.lieu).pipe(take(1)).subscribe(
       () => {
         let message = 'Le lieu a bien été ';
@@ -108,6 +152,7 @@ export class LieuEditComponent implements OnInit, OnDestroy {
           this.lieu.situationGeographique.nomVille = response[0].nom;
           this.lieu.situationGeographique.codePostal = value;
         }
+        this.setMapCenterBySituationGeographique();
       });
     } else {
       this.filteredCodePostal = [];
@@ -132,6 +177,7 @@ export class LieuEditComponent implements OnInit, OnDestroy {
         this.lieu.situationGeographique.codePostal = response.codesPostaux[0];
         this.filteredCodePostal = [];
       }
+      this.setMapCenterBySituationGeographique();
     });
   }
 
@@ -179,5 +225,67 @@ export class LieuEditComponent implements OnInit, OnDestroy {
 
   set typeLieuId(id: number) {
     this.lieu.typeLieu = this.typesLieu.filter(t => t.id === id).reduce(p => p);
+  }
+
+  setMapCenterBySituationGeographique() {
+    if (this.isSyncroMap) {
+      const httpBackend = new HttpClient(this.httpBackend);
+      const optionQ = `q=${this.lieu.situationGeographique.nomVille}`;
+      const optionType = `type=municipality`;
+      if (this.lieu.situationGeographique.nomVille && this.lieu.situationGeographique.codePostal) {
+        const url = `https://api-adresse.data.gouv.fr/search/?${optionQ}&${optionType}`;
+        httpBackend.get(url)
+          .pipe(take(1))
+          .subscribe((response) => {
+            const ville = response['features'].find(o => {
+              const info = o['properties'];
+              return info['city'] === this.lieu.situationGeographique.nomVille && info['postcode'] === this.lieu.situationGeographique.codePostal;
+            });
+            this.setMapCenterByCoord(ville['geometry']['coordinates'][1], ville['geometry']['coordinates'][0]);
+          });
+      }
+    }
+  }
+
+  setMapCenterByCoord(lon: number, lat: number) {
+    const pos = new google.maps.LatLng(lon, lat)
+    this.map.setCenter(pos);
+    this.map.setZoom(14);
+  }
+
+  setSituationGeoByLatLong(lat: number, lon: number) {
+    if (this.isSyncroMap) {
+      const httpBackend = new HttpClient(this.httpBackend);
+      const optionlat = `lon=${lon}`;
+      const optionlon = `lat=${lat}`;
+      if (lat && lon) {
+        const url = `https://api-adresse.data.gouv.fr/reverse/?${optionlon}&${optionlat}`;
+        httpBackend.get(url)
+          .pipe(take(1))
+          .subscribe((response) => {
+            if (response['features'] && response['features'].length > 0) {
+              const item = response['features'][0]['properties'];
+              this.lieu.situationGeographique.nomVille = item['city']
+              this.lieu.situationGeographique.codePostal = item['postcode']
+              const departement = item['context'].split(', ');
+              this.lieu.situationGeographique.departement = departement[1];
+            }
+          });
+      }
+    }
+  }
+
+  setMarker(lat: number, lon: number) {
+    this.marker.setMap(null);
+    this.marker = new google.maps.Marker({
+      position: new google.maps.LatLng(lat, lon),
+      map: this.map,
+      draggable: true
+    });
+    this.marker.setMap(this.map);
+  }
+
+  clickSyncroMap() {
+    this.isSyncroMap = !this.isSyncroMap;
   }
 }

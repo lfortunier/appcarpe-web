@@ -9,6 +9,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {LieuEditComponent} from './lieu-edit/lieu-edit.component';
 import {MaterialModule} from "../materials/material.module";
+import { LieuListMapElementDialogComponent } from './lieu-list/lieu-list-map-element-dialog/lieu-list-map-element-dialog.component';
 
 @NgModule({
   imports: [
@@ -20,7 +21,7 @@ import {MaterialModule} from "../materials/material.module";
     FontAwesomeModule,
     ReactiveFormsModule
   ],
-  declarations: [LieuListComponent, LieuListColumnDisplayPipe, LieuEditComponent],
+  declarations: [LieuListComponent, LieuListColumnDisplayPipe, LieuEditComponent, LieuListMapElementDialogComponent],
   providers: [TypeLieuLibellePipe]
 })
 export class LieuModule {

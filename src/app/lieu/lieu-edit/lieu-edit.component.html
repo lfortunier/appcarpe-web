@@ -5,7 +5,7 @@
       <mat-label>Nom</mat-label>
       <input matInput required [(ngModel)]="lieu.name" name="name">
     </mat-form-field>
-    <ng-container class="mat-form-field-group">
+    <div class="mat-form-field-group">
       <mat-form-field class="triple">
         <mat-label>Ville</mat-label>
         <input matInput
@@ -37,7 +37,7 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-      <mat-form-field class="triple right">
+      <mat-form-field class="departement">
         <mat-label>Departement</mat-label>
         <input matInput
                ngModel
@@ -51,7 +51,17 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-    </ng-container>
+      <a class="aSyncro"
+         #tooltip="matTooltip"
+         matTooltip="Syncronisation avec la map : {{isSyncroMap?'Oui':'Non'}}"
+         [matTooltipPosition]="'above'"
+         matTooltipHideDelay="10"
+      >
+        <fa-icon class="syncro right" [icon]="faExchangeAlt" [size]="'lg'" [class]="isSyncroMap?'syncroActive':''"
+                 (click)="clickSyncroMap()"></fa-icon>
+      </a>
+    </div>
+    <div class="mat-form-field-group simple map" #map></div>
     <mat-form-field appearance="fill" class="mat-form-field-group simple">
       <mat-label>Type</mat-label>
       <mat-select [(ngModel)]="typeLieuId" name="typeLieu">
@@ -73,14 +83,17 @@
     <ng-container>
       <div class="double checkbox-content">
         <p>Type de session</p>
-        <br>
-        <mat-checkbox [(ngModel)]="lieu.session" name="session">Session</mat-checkbox>
+        <div class="checkbox-prix">
+          <mat-checkbox [(ngModel)]="lieu.session" name="session">Session</mat-checkbox>
+        </div>
         <mat-form-field *ngIf="lieu.session" class="prix">
           <mat-label>Prix/24h en €</mat-label>
           <input matInput type="number" [(ngModel)]="lieu.prix24" name="prix24">
         </mat-form-field>
         <br>
-        <mat-checkbox [(ngModel)]="lieu.journee" name="journee">Journée</mat-checkbox>
+        <div class="checkbox-prix">
+          <mat-checkbox [(ngModel)]="lieu.journee" name="journee">Journée</mat-checkbox>
+        </div>
         <mat-form-field *ngIf="lieu.journee" class="prix">
           <mat-label>Prix en €</mat-label>
           <input matInput type="number" [(ngModel)]="lieu.prixJournee" name="prixJournee">

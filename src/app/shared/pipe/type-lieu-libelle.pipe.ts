@@ -14,6 +14,8 @@ export class TypeLieuLibellePipe implements PipeTransform {
         return 'Inconnue';
       case TypeLieuEnum.PRIVER:
         return 'Priver';
+      case TypeLieuEnum.PUBLIC:
+        return 'Public';
       default:
         return '';
     }

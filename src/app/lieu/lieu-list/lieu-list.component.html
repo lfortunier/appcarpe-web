@@ -69,8 +69,12 @@
             <div class="col container-align-center" *ngIf="element.commentaire">
               <div>{{element.commentaire}}</div>
             </div>
-            <div class="col-2 container-align-center" *ngIf="element.siteInternet">
-              <a mat-raised-button [href]="element.siteInternet" target="_blank">Site Internet</a>
+            <div class="col-2 container-align-center"
+                 *ngIf="element.siteInternet || (element.latitude && element.longitude)">
+              <a mat-raised-button [href]="element.siteInternet" target="_blank" class="site_internet"
+                 *ngIf="element.siteInternet">Site Internet</a>
+              <a mat-raised-button (click)="openDialog(element)" target="_blank"
+                 *ngIf="element.latitude && element.longitude">Map</a>
             </div>
           </div>
         </td>
@@ -89,6 +93,6 @@
       </tr>
     </table>
 
-<!--    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>-->
+    <!--    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>-->
   </div>
 </div>

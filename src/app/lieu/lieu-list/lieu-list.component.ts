@@ -12,6 +12,8 @@ import {faEdit, faPlus, faTimes} from "@fortawesome/free-solid-svg-icons";
 import {Lieu} from "../../shared/models/lieu/lieu";
 import {Router} from "@angular/router";
 import {CustomPaginator} from "../../materials/customPaginatorConfiguration";
+import {MatDialog} from "@angular/material/dialog";
+import {LieuListMapElementDialogComponent} from "./lieu-list-map-element-dialog/lieu-list-map-element-dialog.component";
 
 interface LieuListElement {
   id: number,
@@ -29,7 +31,9 @@ interface LieuListElement {
   nomVille: string,
   departement: string,
   codePostal: string,
-  typeLieu: string
+  typeLieu: string,
+  longitude: number,
+  latitude: number
 }
 
 @Component({
@@ -64,7 +68,8 @@ export class LieuListComponent implements OnInit, OnDestroy {
   constructor(private http: HttpClient,
               private messageHandler: DisplayMessageHandlerService,
               private typeLieuPipe: TypeLieuLibellePipe,
-              private router: Router) {
+              private router: Router,
+              private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -113,7 +118,9 @@ export class LieuListComponent implements OnInit, OnDestroy {
       nomVille: lieu.situationGeographique?.nomVille,
       departement: lieu.situationGeographique?.departement,
       codePostal: lieu.situationGeographique?.codePostal,
-      typeLieu: this.typeLieuPipe.transform(lieu.typeLieu?.libelle)
+      typeLieu: this.typeLieuPipe.transform(lieu.typeLieu?.libelle),
+      latitude: lieu.latitude,
+      longitude: lieu.longitude
     } as LieuListElement;
   }
 
@@ -144,5 +151,14 @@ export class LieuListComponent implements OnInit, OnDestroy {
         this.messageHandler.handlerError(error);
       }
     )
+  }
+
+  openDialog(element): void {
+    if (element.longitude && element.latitude) {
+      this.dialog.open(LieuListMapElementDialogComponent, {
+        width: '100%',
+        data: {longitude: element.longitude, latitude: element.latitude}
+      });
+    }
   }
 }
